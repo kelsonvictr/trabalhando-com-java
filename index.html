@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trabalhando com Java — O Caminho para Dev Backend Sênior</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Nunito:wght@400;600;700;800;900&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a12;
+  --surface:#12121e;
+  --surface2:#1a1a2e;
+  --surface3:#222240;
+  --accent:#6c63ff;
+  --accent2:#ff6b6b;
+  --accent3:#4ecdc4;
+  --accent4:#45b7d1;
+  --accent5:#f7b731;
+  --accent6:#a78bfa;
+  --accent7:#06d6a0;
+  --java:#f89820;
+  --spring:#6db33f;
+  --quarkus:#4695EB;
+  --aws:#FF9900;
+  --text:#eef0f8;
+  --text-dim:#8892b0;
+  --code-bg:#0d0d1a;
+  --glow-accent:rgba(108,99,255,0.15);
+  --glow-spring:rgba(109,179,63,0.15);
+  --itau:#003366;
+  --santander:#EC0000;
+  --bradesco:#CC092F;
+}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+
+/* === ANIMATED BACKGROUND === */
+.bg-grid{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(108,99,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(108,99,255,0.03) 1px,transparent 1px);background-size:50px 50px}
+.bg-orbs{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+.bg-orbs .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.08;animation:orbFloat 25s ease-in-out infinite}
+.bg-orbs .orb:nth-child(1){width:600px;height:600px;background:var(--accent);top:-150px;left:-150px;animation-delay:0s}
+.bg-orbs .orb:nth-child(2){width:500px;height:500px;background:var(--java);bottom:-150px;right:-150px;animation-delay:-8s}
+.bg-orbs .orb:nth-child(3){width:400px;height:400px;background:var(--accent2);top:40%;left:60%;animation-delay:-16s}
+.bg-orbs .orb:nth-child(4){width:350px;height:350px;background:var(--spring);top:20%;right:20%;animation-delay:-12s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(60px,-40px) scale(1.1)}66%{transform:translate(-40px,60px) scale(0.9)}}
+
+/* === PROGRESS BAR === */
+.progress-track{position:fixed;top:0;left:0;width:100%;height:4px;z-index:200;background:rgba(255,255,255,0.03)}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--java),var(--spring),var(--accent));transition:width 0.3s;border-radius:0 2px 2px 0;box-shadow:0 0 20px var(--java)}
+
+/* === CONTAINER === */
+.container{max-width:960px;margin:0 auto;padding:20px;position:relative;z-index:1}
+
+/* === NAV SIDEBAR === */
+.sidebar-nav{position:fixed;left:0;top:0;width:290px;height:100vh;background:var(--surface);border-right:1px solid rgba(248,152,32,0.1);z-index:100;transform:translateX(-100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);overflow-y:auto;padding:24px 0}
+.sidebar-nav.open{transform:translateX(0)}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:99;opacity:0;pointer-events:none;transition:opacity 0.3s}
+.sidebar-overlay.open{opacity:1;pointer-events:auto}
+.sidebar-header{padding:0 24px 20px;border-bottom:1px solid rgba(255,255,255,0.05);margin-bottom:12px}
+.sidebar-header h3{font-size:1rem;color:var(--java);font-weight:800;display:flex;align-items:center;gap:8px}
+.sidebar-group{padding:8px 16px}
+.sidebar-group-title{font-size:0.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);padding:8px;font-weight:700}
+.sidebar-link{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:10px;color:var(--text-dim);text-decoration:none;font-size:0.85rem;font-weight:600;transition:all 0.2s;cursor:pointer}
+.sidebar-link:hover,.sidebar-link.active{background:rgba(248,152,32,0.1);color:var(--text)}
+.sidebar-link .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-dim);font-size:1.4rem;cursor:pointer;padding:4px 8px;border-radius:8px;transition:all 0.2s}
+.sidebar-close:hover{color:var(--text);background:rgba(255,255,255,0.05)}
+
+.menu-toggle{position:fixed;top:16px;left:16px;z-index:98;background:var(--surface2);border:1px solid rgba(248,152,32,0.2);color:var(--text);width:44px;height:44px;border-radius:12px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.menu-toggle:hover{background:var(--java);border-color:var(--java)}
+
+/* === HERO === */
+.hero{text-align:center;padding:100px 20px 70px;position:relative}
+.hero-icons{font-size:3.5rem;display:flex;justify-content:center;gap:16px;margin-bottom:24px;animation:fadeSlideDown 0.8s ease both}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--java),var(--accent5));color:white;font-weight:800;font-size:0.8rem;padding:6px 20px;border-radius:50px;text-transform:uppercase;letter-spacing:2px;margin-bottom:24px;animation:fadeSlideDown 0.8s ease 0.1s both}
+.hero h1{font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:900;background:linear-gradient(135deg,var(--text),var(--java));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.15;margin-bottom:16px;animation:fadeSlideDown 0.8s ease 0.2s both}
+.hero .subtitle{font-size:1.15rem;color:var(--text-dim);max-width:700px;margin:0 auto 28px;animation:fadeSlideDown 0.8s ease 0.35s both}
+.hero-stack{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;animation:fadeSlideDown 0.8s ease 0.5s both}
+.stack-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;font-size:0.8rem;font-weight:700;border:1px solid rgba(255,255,255,0.08);background:var(--surface2)}
+.stack-chip.java{border-color:rgba(248,152,32,0.3);color:var(--java)}
+.stack-chip.spring{border-color:rgba(109,179,63,0.3);color:var(--spring)}
+.stack-chip.quarkus{border-color:rgba(70,149,235,0.3);color:var(--quarkus)}
+.stack-chip.aws{border-color:rgba(255,153,0,0.3);color:var(--aws)}
+.stack-chip.cloud{border-color:rgba(69,183,209,0.3);color:var(--accent4)}
+.stack-chip.docker{border-color:rgba(78,205,196,0.3);color:var(--accent3)}
+
+.hero-author{margin-top:32px;animation:fadeSlideDown 0.8s ease 0.65s both}
+.hero-author .author-name{font-size:1.1rem;font-weight:800;color:var(--text)}
+.hero-author .author-role{font-size:0.85rem;color:var(--java);font-weight:700}
+
+@keyframes fadeSlideDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(0.8)}to{opacity:1;transform:scale(1)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 5px rgba(248,152,32,0.2)}50%{box-shadow:0 0 25px rgba(248,152,32,0.5)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes countUp{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+/* === CHAPTER DIVIDER === */
+.chapter-divider{text-align:center;padding:60px 20px 30px;position:relative}
+.chapter-divider::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:1px;background:linear-gradient(90deg,transparent,rgba(248,152,32,0.3),transparent)}
+.chapter-icon{font-size:3rem;display:block;margin-bottom:12px;animation:bounce 2s ease-in-out infinite}
+.chapter-number{display:inline-block;background:linear-gradient(135deg,var(--java),var(--accent5));color:white;font-weight:900;font-size:0.75rem;padding:4px 16px;border-radius:50px;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.chapter-divider h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:8px}
+.chapter-divider h2.grad-java{background:linear-gradient(135deg,var(--java),var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-market{background:linear-gradient(135deg,var(--accent3),var(--accent4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-stack{background:linear-gradient(135deg,var(--accent6),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-career{background:linear-gradient(135deg,var(--accent7),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-banks{background:linear-gradient(135deg,var(--accent4),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-daily{background:linear-gradient(135deg,var(--accent2),var(--accent5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-roadmap{background:linear-gradient(135deg,var(--spring),var(--java));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-divider h2.grad-tips{background:linear-gradient(135deg,var(--accent5),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.chapter-subtitle{color:var(--text-dim);font-size:1rem;max-width:500px;margin:0 auto}
+
+/* === SECTION STEP === */
+.step-section{margin:30px 0;opacity:0;transform:translateY(40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.step-section.visible{opacity:1;transform:translateY(0)}
+
+/* === CARDS === */
+.card{background:var(--surface);border:1px solid rgba(255,255,255,0.05);border-radius:20px;padding:32px;margin-bottom:24px;position:relative;overflow:hidden;transition:border-color 0.3s}
+.card:hover{border-color:rgba(248,152,32,0.15)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--java),transparent);opacity:0;transition:opacity 0.3s}
+.card:hover::before{opacity:1}
+.card h3{font-size:1.25rem;font-weight:800;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+
+/* === CONCEPT BOX === */
+.concept{background:var(--surface2);border-radius:16px;padding:24px;margin:16px 0;border-left:4px solid var(--java)}
+.concept-title{font-family:'Caveat',cursive;font-size:1.4rem;color:var(--java);margin-bottom:8px}
+.concept p{color:var(--text-dim);font-size:0.95rem}
+
+/* === ANALOGY === */
+.analogy{background:linear-gradient(135deg,rgba(248,152,32,0.06),rgba(69,183,209,0.06));border:1px solid rgba(248,152,32,0.15);border-radius:16px;padding:24px;margin:16px 0;position:relative}
+.analogy::before{content:'💡';font-size:1.6rem;position:absolute;top:-14px;left:20px}
+.analogy-title{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--java);margin-bottom:8px}
+.analogy p{color:var(--text-dim);font-size:0.95rem}
+
+/* === TIP / WARNING === */
+.tip{background:rgba(78,205,196,0.06);border:1px solid rgba(78,205,196,0.15);border-radius:14px;padding:20px 24px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.tip-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+.tip-content{color:var(--text-dim);font-size:0.92rem}
+.tip-content strong{color:var(--accent3)}
+
+.warning{background:rgba(247,183,49,0.06);border:1px solid rgba(247,183,49,0.15);border-radius:14px;padding:20px 24px;margin:16px 0;display:flex;gap:12px;align-items:flex-start}
+.warning-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+.warning p{color:var(--text-dim);font-size:0.92rem}
+
+/* === SECTION CONNECTOR === */
+.section-connector{display:flex;justify-content:center;margin:10px 0 20px}
+.section-connector .line{width:2px;height:50px;background:linear-gradient(to bottom,rgba(248,152,32,0.15),transparent)}
+
+/* === STAGGER ANIMATION === */
+.stagger>*{opacity:0;transform:translateY(20px);transition:all 0.5s ease}
+.stagger.visible>*:nth-child(1){transition-delay:.05s}
+.stagger.visible>*:nth-child(2){transition-delay:.1s}
+.stagger.visible>*:nth-child(3){transition-delay:.15s}
+.stagger.visible>*:nth-child(4){transition-delay:.2s}
+.stagger.visible>*:nth-child(5){transition-delay:.25s}
+.stagger.visible>*:nth-child(6){transition-delay:.3s}
+.stagger.visible>*:nth-child(7){transition-delay:.35s}
+.stagger.visible>*:nth-child(8){transition-delay:.4s}
+.stagger.visible>*:nth-child(9){transition-delay:.45s}
+.stagger.visible>*:nth-child(10){transition-delay:.5s}
+.stagger.visible>*{opacity:1;transform:translateY(0)}
+
+/* === KEYWORD MAP === */
+.keyword-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+.keyword-chip{background:var(--surface2);border-radius:12px;padding:14px;text-align:center;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s;cursor:default}
+.keyword-chip:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-3px)}
+.keyword-chip .emoji{font-size:1.4rem;display:block;margin-bottom:6px}
+.keyword-chip .kw-name{font-weight:800;font-size:0.82rem;color:var(--java);display:block;margin-bottom:4px}
+.keyword-chip .kw-desc{font-size:0.72rem;color:var(--text-dim);margin-top:4px;display:block}
+
+/* === TOGGLER === */
+.toggler{background:var(--surface);border-radius:14px;overflow:hidden;margin:16px 0;border:1px solid rgba(255,255,255,0.05)}
+.toggler-header{padding:16px 24px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:background 0.3s;font-weight:700;font-size:0.95rem;user-select:none}
+.toggler-header:hover{background:rgba(255,255,255,0.02)}
+.toggler-arrow{transition:transform 0.3s;font-size:1rem;color:var(--text-dim)}
+.toggler-header.open .toggler-arrow{transform:rotate(180deg)}
+.toggler-body{max-height:0;overflow:hidden;transition:max-height 0.5s ease;padding:0 24px}
+.toggler-body.open{max-height:8000px;padding:0 24px 24px}
+
+/* === STATS COUNTER === */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:20px 0}
+.stat-card{background:var(--surface2);border-radius:16px;padding:24px;text-align:center;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s;cursor:default}
+.stat-card:hover{border-color:rgba(248,152,32,0.2);transform:translateY(-4px)}
+.stat-number{font-size:2.2rem;font-weight:900;display:block;margin-bottom:4px}
+.stat-number.java-color{color:var(--java)}
+.stat-number.spring-color{color:var(--spring)}
+.stat-number.accent-color{color:var(--accent)}
+.stat-number.teal-color{color:var(--accent3)}
+.stat-number.red-color{color:var(--accent2)}
+.stat-label{font-size:0.78rem;color:var(--text-dim);font-weight:600}
+
+/* === BANK CARDS === */
+.bank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px;margin:20px 0}
+.bank-card{border-radius:16px;padding:28px;position:relative;overflow:hidden;transition:all 0.3s;cursor:default}
+.bank-card:hover{transform:translateY(-4px)}
+.bank-card .bank-logo{font-size:2.4rem;margin-bottom:12px;display:block}
+.bank-card .bank-name{font-size:1.2rem;font-weight:900;margin-bottom:8px}
+.bank-card .bank-desc{font-size:0.85rem;line-height:1.6;opacity:0.9}
+.bank-card .bank-stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.bank-card .bank-stack span{font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:50px;background:rgba(255,255,255,0.15);font-family:'JetBrains Mono',monospace}
+.bank-itau{background:linear-gradient(135deg,#003366,#00508F);border:1px solid rgba(0,51,102,0.4)}
+.bank-santander{background:linear-gradient(135deg,#8B0000,#CC1100);border:1px solid rgba(236,0,0,0.3)}
+.bank-bradesco{background:linear-gradient(135deg,#6A0029,#CC092F);border:1px solid rgba(204,9,47,0.3)}
+.bank-nubank{background:linear-gradient(135deg,#4A0E78,#820AD1);border:1px solid rgba(130,10,209,0.3)}
+.bank-inter{background:linear-gradient(135deg,#CC5500,#FF6600);border:1px solid rgba(255,102,0,0.3)}
+.bank-btg{background:linear-gradient(135deg,#1a1a3e,#003366);border:1px solid rgba(0,51,102,0.3)}
+
+/* === FLOW DIAGRAM === */
+.flow-container{display:flex;flex-direction:column;align-items:center;gap:0;margin:24px 0}
+.flow-box{background:var(--surface2);border:2px solid rgba(255,255,255,0.06);border-radius:14px;padding:14px 24px;text-align:center;font-weight:700;font-size:0.9rem;position:relative;min-width:260px;transition:all 0.3s;cursor:default}
+.flow-box:hover{transform:scale(1.03);border-color:rgba(255,255,255,0.15)}
+.flow-box .label{font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;font-weight:800}
+.flow-box.fb-client{border-color:var(--accent2);background:rgba(255,107,107,0.06)}
+.flow-box.fb-api{border-color:var(--accent);background:rgba(108,99,255,0.06)}
+.flow-box.fb-service{border-color:var(--accent5);background:rgba(247,183,49,0.06)}
+.flow-box.fb-db{border-color:var(--accent4);background:rgba(69,183,209,0.06)}
+.flow-box.fb-queue{border-color:var(--accent3);background:rgba(78,205,196,0.06)}
+.flow-box.fb-cache{border-color:var(--accent6);background:rgba(167,139,250,0.06)}
+.flow-box.fb-cloud{border-color:var(--aws);background:rgba(255,153,0,0.06)}
+.flow-arrow{width:2px;height:32px;position:relative;display:flex;align-items:center;justify-content:center}
+.flow-arrow::before{content:'';position:absolute;width:2px;height:100%;background:linear-gradient(to bottom,var(--text-dim),transparent)}
+.flow-arrow::after{content:'▼';position:absolute;bottom:-8px;color:var(--text-dim);font-size:0.65rem}
+
+/* === ROADMAP TIMELINE === */
+.timeline{position:relative;padding:20px 0;margin:20px 0}
+.timeline::before{content:'';position:absolute;left:28px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--java),var(--spring),var(--accent),var(--accent3),var(--accent6));border-radius:2px}
+.timeline-item{position:relative;padding-left:70px;margin-bottom:32px;opacity:0;transform:translateX(-30px);transition:all 0.6s ease}
+.timeline-item.visible{opacity:1;transform:translateX(0)}
+.timeline-dot{position:absolute;left:18px;top:6px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:900;z-index:2}
+.timeline-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid;opacity:0.3}
+.td-java{background:var(--java);color:#000}
+.td-java::after{border-color:var(--java)}
+.td-spring{background:var(--spring);color:#000}
+.td-spring::after{border-color:var(--spring)}
+.td-accent{background:var(--accent);color:#fff}
+.td-accent::after{border-color:var(--accent)}
+.td-teal{background:var(--accent3);color:#000}
+.td-teal::after{border-color:var(--accent3)}
+.td-purple{background:var(--accent6);color:#000}
+.td-purple::after{border-color:var(--accent6)}
+.td-aws{background:var(--aws);color:#000}
+.td-aws::after{border-color:var(--aws)}
+.td-red{background:var(--accent2);color:#fff}
+.td-red::after{border-color:var(--accent2)}
+.td-green{background:var(--accent7);color:#000}
+.td-green::after{border-color:var(--accent7)}
+.timeline-content{background:var(--surface2);border-radius:14px;padding:20px 24px;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s}
+.timeline-content:hover{border-color:rgba(248,152,32,0.15)}
+.timeline-content h4{font-size:1rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.timeline-content p{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+.timeline-content .tech-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.timeline-content .tech-tags span{font-size:0.68rem;font-weight:700;padding:3px 10px;border-radius:50px;background:rgba(248,152,32,0.1);color:var(--java);font-family:'JetBrains Mono',monospace;border:1px solid rgba(248,152,32,0.15)}
+
+/* === LAYER STACK === */
+.layer-stack{display:flex;flex-direction:column;gap:4px;margin:20px 0;max-width:520px;margin-left:auto;margin-right:auto}
+.layer-item{padding:16px 24px;border-radius:12px;text-align:center;font-weight:800;font-size:0.9rem;position:relative;transition:all 0.3s;cursor:default}
+.layer-item:hover{transform:scale(1.03)}
+.layer-item .layer-sub{font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.7);margin-top:2px}
+.layer-client{background:linear-gradient(135deg,rgba(255,107,107,0.15),rgba(255,107,107,0.05));border:1px solid rgba(255,107,107,0.2);color:var(--accent2)}
+.layer-api{background:linear-gradient(135deg,rgba(108,99,255,0.15),rgba(108,99,255,0.05));border:1px solid rgba(108,99,255,0.2);color:var(--accent)}
+.layer-service{background:linear-gradient(135deg,rgba(247,183,49,0.15),rgba(247,183,49,0.05));border:1px solid rgba(247,183,49,0.2);color:var(--accent5)}
+.layer-db{background:linear-gradient(135deg,rgba(69,183,209,0.15),rgba(69,183,209,0.05));border:1px solid rgba(69,183,209,0.2);color:var(--accent4)}
+.layer-infra{background:linear-gradient(135deg,rgba(78,205,196,0.15),rgba(78,205,196,0.05));border:1px solid rgba(78,205,196,0.2);color:var(--accent3)}
+.layer-cloud{background:linear-gradient(135deg,rgba(255,153,0,0.15),rgba(255,153,0,0.05));border:1px solid rgba(255,153,0,0.2);color:var(--aws)}
+.layer-arrow{text-align:center;color:var(--text-dim);font-size:0.8rem}
+
+/* === DAY FLOW === */
+.day-flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:20px 0}
+.day-card{background:var(--surface2);border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s;cursor:default;text-align:center}
+.day-card:hover{border-color:rgba(248,152,32,0.2);transform:translateY(-3px)}
+.day-card .day-time{font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--java);font-weight:700;margin-bottom:8px;display:block}
+.day-card .day-icon{font-size:1.8rem;display:block;margin-bottom:8px}
+.day-card .day-title{font-weight:800;font-size:0.88rem;margin-bottom:4px}
+.day-card .day-desc{font-size:0.75rem;color:var(--text-dim);line-height:1.5}
+
+/* === SALARY TABLE === */
+.salary-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.85rem}
+.salary-table th{padding:12px 16px;text-align:left;color:var(--java);font-weight:800;font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid rgba(248,152,32,0.2);background:rgba(248,152,32,0.04)}
+.salary-table td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,0.03)}
+.salary-table tr:hover td{background:rgba(248,152,32,0.04)}
+.salary-table .salary-value{font-weight:800;color:var(--accent7);font-family:'JetBrains Mono',monospace}
+.salary-table .level-badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.72rem;font-weight:700}
+.level-jr{background:rgba(78,205,196,0.15);color:var(--accent3)}
+.level-pl{background:rgba(108,99,255,0.15);color:var(--accent)}
+.level-sr{background:rgba(248,152,32,0.15);color:var(--java)}
+.level-spec{background:rgba(167,139,250,0.15);color:var(--accent6)}
+.level-lead{background:rgba(255,107,107,0.15);color:var(--accent2)}
+
+/* === COMPARISON GRID === */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.compare-card{background:var(--surface2);border-radius:16px;padding:24px;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s}
+.compare-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-3px)}
+.compare-card .compare-icon{font-size:2rem;display:block;margin-bottom:12px}
+.compare-card h4{font-size:1rem;font-weight:800;margin-bottom:8px}
+.compare-card p{font-size:0.82rem;color:var(--text-dim);line-height:1.6}
+.compare-card ul{list-style:none;padding:0;margin-top:8px}
+.compare-card ul li{font-size:0.82rem;color:var(--text-dim);padding:4px 0;display:flex;align-items:center;gap:8px}
+.compare-card ul li::before{content:'✦';color:var(--java);font-size:0.6rem}
+
+/* === ARCHITECTURE DIAGRAM === */
+.arch-diagram{background:var(--surface2);border-radius:20px;padding:32px;margin:20px 0;border:1px solid rgba(255,255,255,0.05);position:relative}
+.arch-row{display:flex;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;margin:12px 0}
+.arch-box{padding:12px 20px;border-radius:12px;font-weight:700;font-size:0.82rem;text-align:center;border:2px solid;min-width:120px;transition:all 0.3s;cursor:default}
+.arch-box:hover{transform:translateY(-3px)}
+.arch-box.ab-gateway{background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.3);color:var(--accent2)}
+.arch-box.ab-service{background:rgba(248,152,32,0.08);border-color:rgba(248,152,32,0.3);color:var(--java)}
+.arch-box.ab-db{background:rgba(69,183,209,0.08);border-color:rgba(69,183,209,0.3);color:var(--accent4)}
+.arch-box.ab-queue{background:rgba(78,205,196,0.08);border-color:rgba(78,205,196,0.3);color:var(--accent3)}
+.arch-box.ab-cache{background:rgba(167,139,250,0.08);border-color:rgba(167,139,250,0.3);color:var(--accent6)}
+.arch-box.ab-cloud{background:rgba(255,153,0,0.08);border-color:rgba(255,153,0,0.3);color:var(--aws)}
+.arch-box.ab-monitor{background:rgba(108,99,255,0.08);border-color:rgba(108,99,255,0.3);color:var(--accent)}
+.arch-box .ab-sub{font-size:0.65rem;color:var(--text-dim);font-weight:600;margin-top:2px;display:block}
+.arch-arrow-row{text-align:center;color:var(--text-dim);font-size:0.75rem;padding:4px 0}
+
+/* === QUOTE === */
+.quote-block{background:linear-gradient(135deg,rgba(248,152,32,0.06),rgba(108,99,255,0.06));border:1px solid rgba(248,152,32,0.15);border-radius:20px;padding:32px;margin:24px 0;text-align:center;position:relative}
+.quote-block::before{content:'"';font-size:4rem;font-family:'Caveat',cursive;color:var(--java);opacity:0.3;position:absolute;top:8px;left:24px;line-height:1}
+.quote-block p{font-size:1.15rem;font-weight:700;color:var(--text);line-height:1.6;font-style:italic;max-width:600px;margin:0 auto 12px}
+.quote-block .quote-author{font-size:0.85rem;color:var(--java);font-weight:600}
+
+/* === PULSE BADGE === */
+.pulse-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(248,152,32,0.1);border:1px solid rgba(248,152,32,0.25);padding:4px 14px;border-radius:50px;font-size:0.78rem;color:var(--java);font-weight:700}
+.pulse-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--java);animation:pulse 2s ease-in-out infinite}
+
+/* === FINAL CTA === */
+.final-cta{text-align:center;padding:60px 20px 80px}
+.final-cta .cta-emoji{font-size:4rem;display:block;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+.final-cta h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;margin-bottom:12px;background:linear-gradient(135deg,var(--java),var(--spring));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.final-cta p{color:var(--text-dim);font-size:1rem;max-width:600px;margin:0 auto 24px}
+.final-cta .cta-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.final-cta .cta-chip{padding:8px 20px;border-radius:50px;font-size:0.85rem;font-weight:700;border:1px solid rgba(255,255,255,0.1);background:var(--surface2);color:var(--text);transition:all 0.3s}
+.final-cta .cta-chip:hover{transform:translateY(-2px);border-color:var(--java)}
+
+/* === FOOTER === */
+.footer{text-align:center;padding:40px 20px;border-top:1px solid rgba(255,255,255,0.03);color:var(--text-dim);font-size:0.8rem}
+.footer a{color:var(--java);text-decoration:none;font-weight:700}
+.footer a:hover{text-decoration:underline}
+
+/* === RESPONSIVE === */
+@media(max-width:768px){
+  .container{padding:16px}
+  .card{padding:24px}
+  .hero{padding:80px 16px 50px}
+  .hero h1{font-size:2rem}
+  .compare-grid{grid-template-columns:1fr}
+  .bank-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .day-flow{grid-template-columns:1fr 1fr}
+  .arch-row{gap:8px}
+  .arch-box{min-width:90px;padding:10px 14px;font-size:0.75rem}
+  .timeline::before{left:20px}
+  .timeline-item{padding-left:55px}
+  .timeline-dot{left:11px;width:22px;height:22px}
+}
+@media(max-width:480px){
+  .day-flow{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr}
+  .keyword-map{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Background Effects -->
+<div class="bg-grid"></div>
+<div class="bg-orbs">
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+  <div class="orb"></div>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+
+<!-- Menu Toggle -->
+<button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+
+<!-- Sidebar -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<nav class="sidebar-nav" id="sidebarNav">
+  <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+  <div class="sidebar-header">
+    <h3>☕ Trabalhando com Java</h3>
+  </div>
+  <div class="sidebar-group">
+    <div class="sidebar-group-title">Navegação</div>
+    <a class="sidebar-link" href="#hero"><span class="dot" style="background:var(--java)"></span> Início</a>
+    <a class="sidebar-link" href="#java-numbers"><span class="dot" style="background:var(--accent3)"></span> Java em Números</a>
+    <a class="sidebar-link" href="#why-banks"><span class="dot" style="background:var(--accent4)"></span> Por que os Bancos usam Java?</a>
+    <a class="sidebar-link" href="#banks"><span class="dot" style="background:var(--accent2)"></span> Grandes Bancos & Java</a>
+    <a class="sidebar-link" href="#daily"><span class="dot" style="background:var(--accent5)"></span> Dia a Dia do Dev Backend</a>
+    <a class="sidebar-link" href="#architecture"><span class="dot" style="background:var(--accent)"></span> Arquitetura Real</a>
+    <a class="sidebar-link" href="#stack"><span class="dot" style="background:var(--accent6)"></span> Stack Moderna</a>
+    <a class="sidebar-link" href="#spring-vs-quarkus"><span class="dot" style="background:var(--spring)"></span> Spring vs Quarkus</a>
+    <a class="sidebar-link" href="#roadmap"><span class="dot" style="background:var(--java)"></span> Roadmap Jr → Sênior</a>
+    <a class="sidebar-link" href="#salary"><span class="dot" style="background:var(--accent7)"></span> Mercado & Salários</a>
+    <a class="sidebar-link" href="#golden-tips"><span class="dot" style="background:var(--accent5)"></span> Dicas de Ouro</a>
+  </div>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-icons">☕🚀🏗️</div>
+  <div class="hero-badge">Apresentação Interna</div>
+  <h1>Trabalhando com Java<br>no Backend</h1>
+  <p class="subtitle">O caminho, as ferramentas e o que você precisa dominar para chegar às melhores posições como Dev Backend Java.</p>
+  <div class="hero-stack">
+    <span class="stack-chip java">☕ Java 21+</span>
+    <span class="stack-chip spring">🍃 Spring Boot</span>
+    <span class="stack-chip quarkus">⚡ Quarkus</span>
+    <span class="stack-chip aws">☁️ AWS</span>
+    <span class="stack-chip docker">🐳 Docker</span>
+    <span class="stack-chip cloud">🔧 Microsserviços</span>
+  </div>
+  <div class="hero-author">
+    <div class="author-name">Kelson Almeida</div>
+    <div class="author-role">Dev Sênior</div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- JAVA EM NÚMEROS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="java-numbers">
+  <span class="chapter-icon">📊</span>
+  <span class="chapter-number">01 — Contexto</span>
+  <h2 class="grad-java">Java em Números</h2>
+  <p class="chapter-subtitle">Por que Java continua sendo uma das linguagens mais relevantes do mundo</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <div class="stats-grid stagger">
+      <div class="stat-card">
+        <span class="stat-number java-color">30+</span>
+        <span class="stat-label">Anos no mercado</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number spring-color">9M+</span>
+        <span class="stat-label">Desenvolvedores no mundo</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number accent-color">Top 3</span>
+        <span class="stat-label">TIOBE Index 2025</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number teal-color">35.4%</span>
+        <span class="stat-label">Apps Enterprise usam Java</span>
+      </div>
+    </div>
+    
+    <div class="concept">
+      <div class="concept-title">Por que Java não morre?</div>
+      <p><strong>Retrocompatibilidade</strong> — código de 2005 ainda roda em 2025. Nenhuma outra linguagem entrega isso com tanta confiança. Empresas movem <strong>trilhões de dólares</strong> em sistemas Java todos os dias. Trocar seria como trocar os motores de um avião em pleno voo.</p>
+    </div>
+
+    <div class="analogy">
+      <div class="analogy-title">Analogia do Toyota Corolla</div>
+      <p>Java é o <strong>Toyota Corolla</strong> da programação: não é o mais hype, não é o mais bonito, mas é <strong>absurdamente confiável</strong>, tem peça em todo lugar, qualquer mecânico sabe mexer, e vai te levar de A a B sem falhar. É por isso que os bancos confiam nele.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- POR QUE OS BANCOS USAM JAVA -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="why-banks">
+  <span class="chapter-icon">🏦</span>
+  <span class="chapter-number">02 — O Mercado Financeiro</span>
+  <h2 class="grad-banks">Por que os Bancos Escolhem Java?</h2>
+  <p class="chapter-subtitle">Os motivos técnicos e de negócio que mantêm Java como rei do setor financeiro</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <div class="keyword-map stagger">
+      <div class="keyword-chip">
+        <span class="emoji">🔒</span>
+        <span class="kw-name">Segurança</span>
+        <span class="kw-desc">JVM com sandboxing, tipagem forte, ecossistema maduro de security</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">⚡</span>
+        <span class="kw-name">Performance</span>
+        <span class="kw-desc">JIT compiler otimiza em runtime, Virtual Threads no Java 21</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📈</span>
+        <span class="kw-name">Escalabilidade</span>
+        <span class="kw-desc">Milhões de transações por segundo em sistemas distribuídos</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🔄</span>
+        <span class="kw-name">Retrocompat.</span>
+        <span class="kw-desc">Código legado roda em versões novas sem rewrite</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">👥</span>
+        <span class="kw-name">Talent Pool</span>
+        <span class="kw-desc">Fácil encontrar devs Java no mercado</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🧪</span>
+        <span class="kw-name">Testabilidade</span>
+        <span class="kw-desc">JUnit, Mockito, TestContainers — ecossistema de testes maduro</span>
+      </div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">💰</span>
+      <div class="tip-content">
+        <strong>Dado real:</strong> O Itaú processa mais de <strong>1.5 bilhão de transações por mês</strong>. O core dessas transações roda em Java. Quando dinheiro está em jogo, não se usa tecnologia experimental.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- GRANDES BANCOS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="banks">
+  <span class="chapter-icon">🏛️</span>
+  <span class="chapter-number">03 — Cases Reais</span>
+  <h2 class="grad-market">Grandes Bancos que Usam Java</h2>
+  <p class="chapter-subtitle">Do legado ao cloud-native — Java está em todos</p>
+</section>
+
+<div class="step-section">
+  <div class="bank-grid stagger">
+    <div class="bank-card bank-itau">
+      <span class="bank-logo">🟠</span>
+      <div class="bank-name">Itaú Unibanco</div>
+      <div class="bank-desc">Maior banco privado da América Latina. Migrou do mainframe para microsserviços Java com Spring Boot. Investiu pesado em cloud AWS e cultura DevOps.</div>
+      <div class="bank-stack">
+        <span>Java 17+</span>
+        <span>Spring Boot</span>
+        <span>AWS</span>
+        <span>Kafka</span>
+        <span>Kubernetes</span>
+      </div>
+    </div>
+    <div class="bank-card bank-santander">
+      <span class="bank-logo">🔴</span>
+      <div class="bank-name">Santander</div>
+      <div class="bank-desc">Global player que usa Java em suas plataformas de internet banking, APIs Open Banking e sistemas de risco. Forte em microservices e event-driven architecture.</div>
+      <div class="bank-stack">
+        <span>Java</span>
+        <span>Spring Cloud</span>
+        <span>Azure</span>
+        <span>RabbitMQ</span>
+        <span>Docker</span>
+      </div>
+    </div>
+    <div class="bank-card bank-bradesco">
+      <span class="bank-logo">🔴</span>
+      <div class="bank-name">Bradesco</div>
+      <div class="bank-desc">Pioneiro em IA no Brasil (BIA), com backends Java robustos. Utiliza Java para processamento de pagamentos, Pix e integração com parceiros via APIs REST.</div>
+      <div class="bank-stack">
+        <span>Java</span>
+        <span>Spring</span>
+        <span>Oracle</span>
+        <span>IBM MQ</span>
+        <span>Cloud</span>
+      </div>
+    </div>
+    <div class="bank-card bank-nubank">
+      <span class="bank-logo">💜</span>
+      <div class="bank-name">Nubank</div>
+      <div class="bank-desc">Embora use Clojure (que roda na JVM!), prova que o ecossistema Java é inescapável. Times de plataforma usam Java/Kotlin para tooling e infrastructure.</div>
+      <div class="bank-stack">
+        <span>Clojure (JVM)</span>
+        <span>Kotlin</span>
+        <span>AWS</span>
+        <span>Kafka</span>
+        <span>DynamoDB</span>
+      </div>
+    </div>
+    <div class="bank-card bank-inter">
+      <span class="bank-logo">🟧</span>
+      <div class="bank-name">Banco Inter</div>
+      <div class="bank-desc">Super app financeiro 100% digital. Backend Java com Spring Boot, arquitetura de microsserviços na AWS. Crescimento acelerado com Java como core.</div>
+      <div class="bank-stack">
+        <span>Java</span>
+        <span>Spring Boot</span>
+        <span>AWS</span>
+        <span>PostgreSQL</span>
+        <span>Redis</span>
+      </div>
+    </div>
+    <div class="bank-card bank-btg">
+      <span class="bank-logo">🔷</span>
+      <div class="bank-name">BTG Pactual</div>
+      <div class="bank-desc">Maior banco de investimentos da América Latina. Java é usado em sistemas de trading, risk management e plataformas digitais de investimento.</div>
+      <div class="bank-stack">
+        <span>Java</span>
+        <span>Kotlin</span>
+        <span>Spring</span>
+        <span>Kafka</span>
+        <span>AWS/GCP</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <span class="warning-icon">🎯</span>
+    <p><strong>Insight importante:</strong> Esses bancos não usam Java por acidente. É uma decisão técnica e estratégica baseada em décadas de confiabilidade. Quando um sistema não pode cair, Java é a escolha.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- DIA A DIA DO DEV BACKEND -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="daily">
+  <span class="chapter-icon">💻</span>
+  <span class="chapter-number">04 — Na Prática</span>
+  <h2 class="grad-daily">O Dia a Dia do Dev Backend Java</h2>
+  <p class="chapter-subtitle">O que você realmente faz no dia a dia trabalhando com Java</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <h3>📅 Um dia típico de um Dev Backend Java</h3>
+    <div class="day-flow stagger">
+      <div class="day-card">
+        <span class="day-time">09:00</span>
+        <span class="day-icon">☕</span>
+        <div class="day-title">Daily Stand-up</div>
+        <div class="day-desc">15min — o que fiz, o que vou fazer, blockers</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">09:30</span>
+        <span class="day-icon">🔍</span>
+        <div class="day-title">Code Review</div>
+        <div class="day-desc">Revisar PRs dos colegas, sugerir melhorias, aprovar</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">10:00</span>
+        <span class="day-icon">⌨️</span>
+        <div class="day-title">Desenvolvimento</div>
+        <div class="day-desc">APIs REST, regras de negócio, integrações, testes</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">12:00</span>
+        <span class="day-icon">🍽️</span>
+        <div class="day-title">Almoço</div>
+        <div class="day-desc">Pausa sagrada (sim, dev come)</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">13:30</span>
+        <span class="day-icon">🏗️</span>
+        <div class="day-title">Arquitetura & Design</div>
+        <div class="day-desc">Discussões técnicas, refinamento, design de APIs</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">15:00</span>
+        <span class="day-icon">🐛</span>
+        <div class="day-title">Debug & Troubleshoot</div>
+        <div class="day-desc">Investigar bugs, analisar logs, métricas</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">16:30</span>
+        <span class="day-icon">🚀</span>
+        <div class="day-title">Deploy & CI/CD</div>
+        <div class="day-desc">Subir features, acompanhar pipeline, monitoring</div>
+      </div>
+      <div class="day-card">
+        <span class="day-time">17:30</span>
+        <span class="day-icon">📚</span>
+        <div class="day-title">Estudo & Mentoria</div>
+        <div class="day-desc">Ler docs, fazer POCs, ajudar juniors</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🛠️ O que você realmente codifica?</h3>
+    <div class="keyword-map stagger">
+      <div class="keyword-chip">
+        <span class="emoji">🔌</span>
+        <span class="kw-name">APIs REST</span>
+        <span class="kw-desc">Endpoints para apps mobile e web consumirem</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📨</span>
+        <span class="kw-name">Mensageria</span>
+        <span class="kw-desc">Kafka, RabbitMQ, SQS — comunicação assíncrona</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🗄️</span>
+        <span class="kw-name">Banco de Dados</span>
+        <span class="kw-desc">JPA/Hibernate, queries, migrations, modelagem</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🔐</span>
+        <span class="kw-name">Autenticação</span>
+        <span class="kw-desc">JWT, OAuth2, Spring Security, Keycloak</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🧪</span>
+        <span class="kw-name">Testes</span>
+        <span class="kw-desc">Unit, integration, contract, e2e</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📊</span>
+        <span class="kw-name">Observabilidade</span>
+        <span class="kw-desc">Logs, métricas, tracing distribuído</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ARQUITETURA REAL -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="architecture">
+  <span class="chapter-icon">🏗️</span>
+  <span class="chapter-number">05 — Arquitetura</span>
+  <h2 class="grad-stack">Arquitetura Real de um Sistema Bancário</h2>
+  <p class="chapter-subtitle">Como os microsserviços se conectam no mundo real</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <h3>🌐 Visão Macro — Microsserviços na Nuvem</h3>
+    <div class="arch-diagram">
+      <!-- Camada de entrada -->
+      <div style="text-align:center;font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:2px;font-weight:800;margin-bottom:8px">📱 Clientes (Mobile, Web, Parceiros)</div>
+      <div class="arch-arrow-row">▼ ▼ ▼</div>
+
+      <!-- API Gateway -->
+      <div class="arch-row">
+        <div class="arch-box ab-gateway">🚪 API Gateway<span class="ab-sub">Kong / AWS API GW</span></div>
+      </div>
+      <div class="arch-arrow-row">▼ roteia para os microsserviços ▼</div>
+
+      <!-- Microsserviços -->
+      <div class="arch-row">
+        <div class="arch-box ab-service">👤 Auth Service<span class="ab-sub">JWT / OAuth2</span></div>
+        <div class="arch-box ab-service">💳 Payment Service<span class="ab-sub">PIX, TED, Boleto</span></div>
+        <div class="arch-box ab-service">📊 Account Service<span class="ab-sub">Saldo, Extrato</span></div>
+        <div class="arch-box ab-service">🔔 Notification<span class="ab-sub">Email, Push, SMS</span></div>
+      </div>
+      <div class="arch-arrow-row">▼ cada serviço com seu banco ▼</div>
+
+      <!-- Dados -->
+      <div class="arch-row">
+        <div class="arch-box ab-db">🐘 PostgreSQL</div>
+        <div class="arch-box ab-cache">⚡ Redis Cache</div>
+        <div class="arch-box ab-queue">📨 Kafka / SQS</div>
+        <div class="arch-box ab-monitor">📈 Datadog/Grafana</div>
+      </div>
+
+      <!-- Cloud -->
+      <div class="arch-arrow-row" style="margin-top:12px">─── rodando em ───</div>
+      <div class="arch-row">
+        <div class="arch-box ab-cloud">☁️ AWS / Azure / GCP<span class="ab-sub">EKS / ECS / Lambda</span></div>
+      </div>
+    </div>
+
+    <div class="tip">
+      <span class="tip-icon">🎓</span>
+      <div class="tip-content">
+        <strong>Para o Junior:</strong> Você não precisa dominar tudo isso no dia 1. Comece entendendo <strong>um serviço</strong>, como ele recebe requisições e retorna respostas. O resto vem com o tempo e a exposição.
+      </div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h3>📦 Anatomia de um Microsserviço Java</h3>
+    <div class="layer-stack stagger">
+      <div class="layer-item layer-client">📱 Client (Mobile/Web)<div class="layer-sub">Quem consome a API</div></div>
+      <div class="layer-arrow">▼</div>
+      <div class="layer-item layer-api">🎮 Controller (REST API)<div class="layer-sub">Recebe HTTP, valida, responde</div></div>
+      <div class="layer-arrow">▼</div>
+      <div class="layer-item layer-service">⚙️ Service (Regras de Negócio)<div class="layer-sub">Onde mora a inteligência da aplicação</div></div>
+      <div class="layer-arrow">▼</div>
+      <div class="layer-item layer-db">🗄️ Repository (JPA/Hibernate)<div class="layer-sub">Traduz objetos Java ↔ SQL</div></div>
+      <div class="layer-arrow">▼</div>
+      <div class="layer-item layer-infra">🐘 Database (PostgreSQL/MySQL)<div class="layer-sub">Dados persistidos com segurança</div></div>
+      <div class="layer-arrow">↕️</div>
+      <div class="layer-item layer-cloud">📨 Messaging (Kafka/SQS) + ☁️ Cloud<div class="layer-sub">Comunicação assíncrona entre serviços</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- STACK MODERNA -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="stack">
+  <span class="chapter-icon">🧰</span>
+  <span class="chapter-number">06 — Ferramentas</span>
+  <h2 class="grad-stack">A Stack Moderna do Dev Java</h2>
+  <p class="chapter-subtitle">O que as empresas top esperam que você conheça</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <h3>⚙️ Ecossistema Completo</h3>
+    <div class="keyword-map stagger">
+      <div class="keyword-chip">
+        <span class="emoji">☕</span>
+        <span class="kw-name">Java 17/21</span>
+        <span class="kw-desc">Records, Sealed Classes, Virtual Threads, Pattern Matching</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🍃</span>
+        <span class="kw-name">Spring Boot</span>
+        <span class="kw-desc">Framework #1 — auto-config, dependency injection, starters</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">⚡</span>
+        <span class="kw-name">Quarkus</span>
+        <span class="kw-desc">Cloud-native, GraalVM, startup ultra-rápido, menor memória</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🐘</span>
+        <span class="kw-name">PostgreSQL</span>
+        <span class="kw-desc">Banco relacional mais querido, JSONB, performance</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📨</span>
+        <span class="kw-name">Kafka / SQS</span>
+        <span class="kw-desc">Eventos, filas, event-driven architecture</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🐳</span>
+        <span class="kw-name">Docker</span>
+        <span class="kw-desc">Containers, ambientes reproduzíveis, CI/CD</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">☸️</span>
+        <span class="kw-name">Kubernetes</span>
+        <span class="kw-desc">Orquestração de containers, scaling, self-healing</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">☁️</span>
+        <span class="kw-name">AWS / Azure</span>
+        <span class="kw-desc">EC2, ECS, Lambda, S3, RDS, SQS, CloudWatch</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🧪</span>
+        <span class="kw-name">JUnit + Mockito</span>
+        <span class="kw-desc">Testes unitários, mocks, TestContainers</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📊</span>
+        <span class="kw-name">Observabilidade</span>
+        <span class="kw-desc">Grafana, Prometheus, Datadog, ELK Stack</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🔀</span>
+        <span class="kw-name">Git & CI/CD</span>
+        <span class="kw-desc">GitHub, GitLab, Jenkins, GitHub Actions</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📐</span>
+        <span class="kw-name">Clean Arch</span>
+        <span class="kw-desc">Hexagonal, DDD, SOLID, Design Patterns</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SPRING VS QUARKUS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="spring-vs-quarkus">
+  <span class="chapter-icon">⚔️</span>
+  <span class="chapter-number">07 — Comparativo</span>
+  <h2 class="grad-roadmap">Spring Boot vs Quarkus</h2>
+  <p class="chapter-subtitle">Dois gigantes do ecossistema Java — quando usar cada um</p>
+</section>
+
+<div class="step-section">
+  <div class="compare-grid stagger">
+    <div class="compare-card" style="border-color:rgba(109,179,63,0.2)">
+      <span class="compare-icon">🍃</span>
+      <h4 style="color:var(--spring)">Spring Boot</h4>
+      <p>O framework mais usado no mundo Java. Maduro, vasto ecossistema, documentação absurda.</p>
+      <ul>
+        <li>Ecossistema gigantesco (Spring Cloud, Security, Data, Batch...)</li>
+        <li>Comunidade massiva, fácil achar ajuda</li>
+        <li>Adotado por 70%+ das empresas Java</li>
+        <li>Spring Native evoluindo (GraalVM)</li>
+        <li>Ideal para sistemas enterprise complexos</li>
+      </ul>
+    </div>
+    <div class="compare-card" style="border-color:rgba(70,149,235,0.2)">
+      <span class="compare-icon">⚡</span>
+      <h4 style="color:var(--quarkus)">Quarkus</h4>
+      <p>O framework cloud-native da Red Hat. Pensado para containers e serverless desde o dia 1.</p>
+      <ul>
+        <li>Startup em milissegundos (GraalVM nativo)</li>
+        <li>Consumo de memória 10x menor</li>
+        <li>Dev mode com hot-reload instantâneo</li>
+        <li>Ideal para Kubernetes e Serverless</li>
+        <li>Crescimento acelerado no mercado</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">Quando usar qual?</div>
+    <p><strong>Spring Boot</strong> = quando a empresa já tem ecossistema Spring, precisa de integrações complexas, ou é um sistema enterprise grande. <strong>Quarkus</strong> = quando performance e consumo de memória são críticos, ambiente cloud-native, microsserviços leves, serverless (AWS Lambda). <strong>Na prática?</strong> Saiba os dois. As vagas mais bem pagas pedem ambos.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- ROADMAP JR → SÊNIOR -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="roadmap">
+  <span class="chapter-icon">🗺️</span>
+  <span class="chapter-number">08 — O Caminho</span>
+  <h2 class="grad-roadmap">Roadmap: Junior → Sênior</h2>
+  <p class="chapter-subtitle">O que estudar e em que ordem para escalar posições</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <h3>🛤️ A Trilha Completa</h3>
+    <div class="timeline">
+      <!-- 1 - Fundamentos -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-java">1</div>
+        <div class="timeline-content">
+          <h4>☕ Fundamentos Java Sólidos</h4>
+          <p>Sem isso, nada funciona. OOP, Collections, Streams, Exceptions, Generics. Entenda como a JVM funciona, Garbage Collector, memória heap vs stack.</p>
+          <div class="tech-tags">
+            <span>OOP</span>
+            <span>Collections</span>
+            <span>Streams API</span>
+            <span>Generics</span>
+            <span>JVM</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 - Spring -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-spring">2</div>
+        <div class="timeline-content">
+          <h4>🍃 Spring Boot — O Framework</h4>
+          <p>Aprenda Spring Boot de verdade: IoC, Dependency Injection, auto-configuration. Crie APIs REST completas com Spring Web, Spring Data JPA, e Spring Security.</p>
+          <div class="tech-tags">
+            <span>Spring Boot</span>
+            <span>Spring Web</span>
+            <span>Spring Data JPA</span>
+            <span>Spring Security</span>
+            <span>Lombok</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 - Banco de Dados -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-accent">3</div>
+        <div class="timeline-content">
+          <h4>🗄️ Banco de Dados — Relacional e NoSQL</h4>
+          <p>SQL fluente é obrigatório. Aprenda PostgreSQL/MySQL, modelagem, índices, queries complexas. Depois explore Redis, MongoDB, DynamoDB para casos específicos.</p>
+          <div class="tech-tags">
+            <span>PostgreSQL</span>
+            <span>JPA/Hibernate</span>
+            <span>Flyway</span>
+            <span>Redis</span>
+            <span>MongoDB</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 - Testes -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-teal">4</div>
+        <div class="timeline-content">
+          <h4>🧪 Testes — Sua Rede de Segurança</h4>
+          <p>Dev que não testa é dev que quebra produção. JUnit 5, Mockito, TestContainers, WireMock. Pirâmide de testes: muitos unitários, alguns de integração, poucos E2E.</p>
+          <div class="tech-tags">
+            <span>JUnit 5</span>
+            <span>Mockito</span>
+            <span>TestContainers</span>
+            <span>WireMock</span>
+            <span>Contract Tests</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 - Docker & CI/CD -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-purple">5</div>
+        <div class="timeline-content">
+          <h4>🐳 Docker, CI/CD & DevOps</h4>
+          <p>Containerize suas apps, crie pipelines de deploy automatizado. GitHub Actions, Jenkins, GitLab CI. Entenda conceitos de infraestrutura como código.</p>
+          <div class="tech-tags">
+            <span>Docker</span>
+            <span>Docker Compose</span>
+            <span>GitHub Actions</span>
+            <span>Jenkins</span>
+            <span>Terraform</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 - Cloud -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-aws">6</div>
+        <div class="timeline-content">
+          <h4>☁️ Cloud (AWS/Azure/GCP)</h4>
+          <p>A cloud é o presente, não o futuro. Aprenda pelo menos uma. AWS é a mais pedida. EC2, S3, RDS, SQS, Lambda, ECS/EKS. Certificações contam muito.</p>
+          <div class="tech-tags">
+            <span>AWS</span>
+            <span>EC2/ECS</span>
+            <span>S3</span>
+            <span>RDS</span>
+            <span>SQS/SNS</span>
+            <span>Lambda</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7 - Microsserviços -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-red">7</div>
+        <div class="timeline-content">
+          <h4>🔧 Microsserviços & Mensageria</h4>
+          <p>Quebre monólitos com responsabilidade. Entenda quando usar (e quando NÃO usar) microsserviços. Kafka, RabbitMQ, event-driven architecture, saga pattern.</p>
+          <div class="tech-tags">
+            <span>Kafka</span>
+            <span>RabbitMQ</span>
+            <span>Spring Cloud</span>
+            <span>API Gateway</span>
+            <span>Service Mesh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8 - Sênior -->
+      <div class="timeline-item">
+        <div class="timeline-dot td-green">8</div>
+        <div class="timeline-content">
+          <h4>🏆 Nível Sênior — Arquitetura & Liderança Técnica</h4>
+          <p>Sênior não é só código. É tomar decisões técnicas que impactam o time. Clean Architecture, DDD, CQRS, design patterns, mentoria, comunicação clara, visão de produto.</p>
+          <div class="tech-tags">
+            <span>Clean Arch</span>
+            <span>DDD</span>
+            <span>CQRS</span>
+            <span>Design Patterns</span>
+            <span>Tech Lead</span>
+            <span>System Design</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- MERCADO & SALÁRIOS -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="salary">
+  <span class="chapter-icon">💰</span>
+  <span class="chapter-number">09 — Mercado</span>
+  <h2 class="grad-career">Mercado & Salários</h2>
+  <p class="chapter-subtitle">O que esperar em termos de remuneração e oportunidades</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <h3>💵 Faixas Salariais — Dev Backend Java (Brasil, 2025)</h3>
+    <table class="salary-table">
+      <thead>
+        <tr>
+          <th>Nível</th>
+          <th>Experiência</th>
+          <th>Faixa CLT</th>
+          <th>Faixa PJ</th>
+          <th>Diferenciais</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="level-badge level-jr">Júnior</span></td>
+          <td>0-2 anos</td>
+          <td class="salary-value">R$ 3k - 6k</td>
+          <td class="salary-value">R$ 5k - 9k</td>
+          <td style="font-size:0.78rem;color:var(--text-dim)">Java, Spring Boot, SQL básico</td>
+        </tr>
+        <tr>
+          <td><span class="level-badge level-pl">Pleno</span></td>
+          <td>2-5 anos</td>
+          <td class="salary-value">R$ 7k - 12k</td>
+          <td class="salary-value">R$ 10k - 18k</td>
+          <td style="font-size:0.78rem;color:var(--text-dim)">+ Docker, Testes, Cloud básico</td>
+        </tr>
+        <tr>
+          <td><span class="level-badge level-sr">Sênior</span></td>
+          <td>5-8 anos</td>
+          <td class="salary-value">R$ 13k - 20k</td>
+          <td class="salary-value">R$ 18k - 28k</td>
+          <td style="font-size:0.78rem;color:var(--text-dim)">+ Microsserviços, Kafka, K8s, AWS</td>
+        </tr>
+        <tr>
+          <td><span class="level-badge level-spec">Especialista</span></td>
+          <td>8+ anos</td>
+          <td class="salary-value">R$ 20k - 30k</td>
+          <td class="salary-value">R$ 25k - 40k</td>
+          <td style="font-size:0.78rem;color:var(--text-dim)">+ Arquitetura, System Design, Liderança</td>
+        </tr>
+        <tr>
+          <td><span class="level-badge level-lead">Internacional</span></td>
+          <td>5+ anos</td>
+          <td class="salary-value">USD 5k - 12k</td>
+          <td class="salary-value">USD 8k - 18k</td>
+          <td style="font-size:0.78rem;color:var(--text-dim)">Inglês fluente + stack completa</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="warning">
+      <span class="warning-icon">📊</span>
+      <p><strong>Valores de referência</strong> baseados em pesquisas do Glassdoor, Levels.fyi e dados reais do mercado (2025). Podem variar por região, empresa e stack específica. <strong>Empresas de tecnologia financeira (fintechs)</strong> tendem a pagar mais.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚀 O que aumenta seu salário?</h3>
+    <div class="keyword-map stagger">
+      <div class="keyword-chip">
+        <span class="emoji">🌍</span>
+        <span class="kw-name">Inglês</span>
+        <span class="kw-desc">Multiplica seu salário em 2-3x. Vagas internacionais remotas.</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">☁️</span>
+        <span class="kw-name">Certificação AWS</span>
+        <span class="kw-desc">Cloud Practitioner → Associate → Professional</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🏗️</span>
+        <span class="kw-name">System Design</span>
+        <span class="kw-desc">Saber projetar sistemas escaláveis e resilientes</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📨</span>
+        <span class="kw-name">Event-Driven</span>
+        <span class="kw-desc">Kafka, CQRS, Event Sourcing — as empresas pagam caro</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">🤝</span>
+        <span class="kw-name">Soft Skills</span>
+        <span class="kw-desc">Comunicação, mentoria, liderança técnica</span>
+      </div>
+      <div class="keyword-chip">
+        <span class="emoji">📝</span>
+        <span class="kw-name">Contribuições</span>
+        <span class="kw-desc">Open source, artigos, talks — visibilidade importa</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- DICAS DE OURO -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="chapter-divider" id="golden-tips">
+  <span class="chapter-icon">🏅</span>
+  <span class="chapter-number">10 — Dicas de Ouro</span>
+  <h2 class="grad-tips">Conselhos de quem está na trincheira</h2>
+  <p class="chapter-subtitle">Atalhos que gostaria de ter ouvido quando era júnior</p>
+</section>
+
+<div class="step-section">
+  <div class="card">
+    <div class="quote-block">
+      <p>O melhor código é aquele que outro dev entende sem precisar te perguntar nada.</p>
+      <span class="quote-author">— Todo Sênior, eventualmente</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎯 10 Mandamentos do Dev Java Backend</h3>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>1️⃣ Domine os fundamentos antes dos frameworks</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Spring Boot é poderoso, mas se você não entende Java puro — OOP, interfaces, generics, streams — você vai copiar e colar Stack Overflow sem entender o que está fazendo. <strong>Fundamento é o que separa quem resolve problemas de quem cria novos.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>2️⃣ Escreva testes ANTES de dizer que está "pronto"</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Sem teste, sua feature é um bug que ainda não foi descoberto. JUnit + Mockito é o mínimo. Testes de integração com TestContainers são o diferencial. <strong>O dev que testa dorme tranquilo.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>3️⃣ Aprenda SQL de verdade</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">JPA é ótimo, mas quando a query otimizada faz diferença de 30 segundos para 200ms, você precisa saber SQL. Aprenda JOINs, subqueries, window functions, explain analyze. <strong>O banco é o gargalo #1 de performance.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>4️⃣ Git não é só commit e push</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Rebase, cherry-pick, bisect, stash, squash. Saiba resolver conflitos de merge sem pânico. <strong>Commits limpos e PRs bem escritas são seu cartão de visita.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>5️⃣ Leia código dos outros — muito</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Abra projetos open source em Java. Leia o código do Spring, do Hibernate, do Kafka client. <strong>Você aprende mais lendo código bom do que escrevendo código ruim.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>6️⃣ Invista pesado em inglês</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Não é opcional. A melhor documentação está em inglês. As melhores vagas exigem inglês. O salário pode triplicar com inglês fluente. <strong>Estude 30 min por dia, todo dia, sem exceção.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>7️⃣ Entenda o negócio, não só o código</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Dev Sênior entende POR QUE está construindo algo, não apenas COMO. Entenda o domínio, as métricas de negócio, o impacto do que você faz. <strong>Isso te torna insubstituível.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>8️⃣ Não tenha medo de errar em produção</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Todo mundo já quebrou produção. O que separa o bom do ruim é: rollback rápido, post-mortem honesto, e melhorar o processo para não acontecer de novo. <strong>Errar faz parte, repetir o erro não.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>9️⃣ Construa projetos pessoais reais</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Não CRUD de tutorial. Construa algo que resolva um problema real. Deploy na AWS. Coloque Kafka. Monitore com Grafana. Seu portfólio vale mais que certificado. <strong>Show, don't tell.</strong></p>
+      </div>
+    </div>
+
+    <div class="toggler">
+      <div class="toggler-header" onclick="toggleContent(this)">
+        <span>🔟 Tenha paciência — ser Sênior leva tempo</span>
+        <span class="toggler-arrow">▼</span>
+      </div>
+      <div class="toggler-body">
+        <p style="color:var(--text-dim);font-size:0.9rem;line-height:1.7">Não existe atalho de 6 meses. Senioridade vem de resolver problemas complexos em contextos reais, com pressão e consequências. Confie no processo, seja consistente. <strong>O composto dos pequenos avanços diários é transformador.</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- FINAL CTA -->
+<!-- ═══════════════════════════════════════════ -->
+<section class="section-connector"><div class="line"></div></section>
+
+<section class="final-cta" id="final">
+  <span class="cta-emoji">🚀</span>
+  <h2>O Java é o Caminho. A Jornada é Sua.</h2>
+  <p>Você está no início de algo que pode te levar muito longe. O mercado está aquecido, as vagas estão aí, e a linguagem que move o mundo financeiro está nas suas mãos. Agora é com você.</p>
+  <div class="cta-chips">
+    <span class="cta-chip">☕ Estude Java</span>
+    <span class="cta-chip">🍃 Aprenda Spring</span>
+    <span class="cta-chip">☁️ Explore Cloud</span>
+    <span class="cta-chip">🧪 Escreva Testes</span>
+    <span class="cta-chip">🌍 Aprenda Inglês</span>
+    <span class="cta-chip">🏗️ Construa Projetos</span>
+  </div>
+</section>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Feito com ☕ por <a href="https://github.com/kelsonvictr" target="_blank">Kelson Almeida</a> — Dev Sênior</p>
+  <p style="margin-top:4px;font-size:0.72rem;opacity:0.5">Apresentação interna — 2025</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════ -->
+<!-- SCRIPTS -->
+<!-- ═══════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════
+// SIDEBAR TOGGLE
+// ═══════════════════════════════════════════
+function toggleSidebar(){
+  const nav=document.getElementById('sidebarNav');
+  const overlay=document.getElementById('sidebarOverlay');
+  nav.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+// Close sidebar when clicking a link
+document.querySelectorAll('.sidebar-link').forEach(link=>{
+  link.addEventListener('click',()=>{
+    document.getElementById('sidebarNav').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  });
+});
+
+// ═══════════════════════════════════════════
+// PROGRESS BAR
+// ═══════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const winH=document.documentElement.scrollHeight-window.innerHeight;
+  const scrolled=(window.scrollY/winH)*100;
+  document.getElementById('progressBar').style.width=scrolled+'%';
+});
+
+// ═══════════════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════════════
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+},{threshold:0.1,rootMargin:'0px 0px -50px 0px'});
+
+document.querySelectorAll('.step-section, .stagger, .timeline-item').forEach(el=>{
+  observer.observe(el);
+});
+
+// ═══════════════════════════════════════════
+// TOGGLER
+// ═══════════════════════════════════════════
+function toggleContent(header){
+  header.classList.toggle('open');
+  const body=header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════
+// STAT COUNTER ANIMATION
+// ═══════════════════════════════════════════
+const statObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const statCards=entry.target.querySelectorAll('.stat-card');
+      statCards.forEach((card,i)=>{
+        card.style.animation=`popIn 0.5s ease ${i*0.15}s both`;
+      });
+      statObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:0.3});
+
+document.querySelectorAll('.stats-grid').forEach(grid=>{
+  statObserver.observe(grid);
+});
+
+// ═══════════════════════════════════════════
+// ACTIVE SIDEBAR LINK ON SCROLL
+// ═══════════════════════════════════════════
+const sections=document.querySelectorAll('[id]');
+const navLinks=document.querySelectorAll('.sidebar-link');
+
+window.addEventListener('scroll',()=>{
+  let current='';
+  sections.forEach(section=>{
+    const sectionTop=section.offsetTop;
+    if(scrollY>=sectionTop-200){
+      current=section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link=>{
+    link.classList.remove('active');
+    if(link.getAttribute('href')==='#'+current){
+      link.classList.add('active');
+    }
+  });
+});
+
+// ═══════════════════════════════════════════
+// BANK CARDS HOVER GLOW
+// ═══════════════════════════════════════════
+document.querySelectorAll('.bank-card').forEach(card=>{
+  card.addEventListener('mouseenter',function(){
+    this.style.boxShadow='0 8px 40px rgba(0,0,0,0.3)';
+  });
+  card.addEventListener('mouseleave',function(){
+    this.style.boxShadow='none';
+  });
+});
+
+// ═══════════════════════════════════════════
+// TIMELINE STAGGER ANIMATION
+// ═══════════════════════════════════════════
+const timelineObserver=new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+},{threshold:0.2,rootMargin:'0px 0px -30px 0px'});
+
+document.querySelectorAll('.timeline-item').forEach(item=>{
+  timelineObserver.observe(item);
+});
+
+// ═══════════════════════════════════════════
+// KEYBOARD SHORTCUT - ESC closes sidebar
+// ═══════════════════════════════════════════
+document.addEventListener('keydown',(e)=>{
+  if(e.key==='Escape'){
+    document.getElementById('sidebarNav').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
